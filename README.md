@@ -15,7 +15,7 @@ Stataconda is a powerful desktop GUI application that provides a Stata-like inte
 ## Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/stataconda.git
+git clone https://github.com/elliottash/stataconda.git
 cd stataconda
 
 # Create and activate virtual environment
