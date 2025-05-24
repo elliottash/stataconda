@@ -48,6 +48,29 @@ def test_bash_commands():
         result = run_command(gui, '!nonexistent_command')
         assert "Error" in result
         
+        # Test cd command
+        original_dir = os.getcwd()
+        try:
+            # Create a test directory
+            test_dir = os.path.join(temp_dir, 'test_cd')
+            os.makedirs(test_dir)
+            
+            # Test changing to the test directory
+            result = run_command(gui, 'cd ' + test_dir)
+            assert "Changed directory to" in result
+            assert os.getcwd() == test_dir
+            
+            # Test changing to a non-existent directory
+            result = run_command(gui, 'cd nonexistent_dir')
+            assert "Error changing directory" in result
+            
+            # Test cd without arguments
+            result = run_command(gui, 'cd')
+            assert "Usage: cd <directory>" in result
+        finally:
+            # Change back to original directory
+            os.chdir(original_dir)
+        
         print("All bash command tests passed!")
         
     finally:

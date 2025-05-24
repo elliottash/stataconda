@@ -2996,24 +2996,25 @@ class StatacondaGUI(QMainWindow):
                     output = stdout.decode() + stderr.decode()
                     self.results_window.append(output)
                     print(f"[OUTPUT] {output}")  # Log output to console
-                elif exec_command in ['pwd', 'ls', 'cd']:
-                    # Execute major bash commands directly
-                    if exec_command == 'cd':
-                        # Handle cd command
-                        parts = exec_command.split()
-                        if len(parts) < 2:
-                            return 'Usage: cd <directory>'
-                        directory = parts[1]
+                elif exec_command.startswith('cd '):
+                    # Handle cd command
+                    directory = exec_command[3:].strip()
+                    try:
                         os.chdir(directory)
-                        output = f'Changed directory to {directory}'
+                        output = f'Changed directory to {os.getcwd()}'
                         self.results_window.append(output)
                         print(f"[OUTPUT] {output}")  # Log output to console
-                    else:
-                        process = subprocess.Popen(exec_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                        stdout, stderr = process.communicate()
-                        output = stdout.decode() + stderr.decode()
-                        self.results_window.append(output)
-                        print(f"[OUTPUT] {output}")  # Log output to console
+                    except Exception as e:
+                        error_msg = f'Error changing directory: {str(e)}'
+                        self.results_window.append(error_msg)
+                        print(f"[ERROR] {error_msg}")  # Log error to console
+                elif exec_command in ['pwd', 'ls']:
+                    # Execute major bash commands directly
+                    process = subprocess.Popen(exec_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    stdout, stderr = process.communicate()
+                    output = stdout.decode() + stderr.decode()
+                    self.results_window.append(output)
+                    print(f"[OUTPUT] {output}")  # Log output to console
                 else:
                     # Find handler for Stata-like commands
                     cmd_name = exec_command.split()[0].lower()
