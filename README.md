@@ -1,7 +1,7 @@
 # Stataconda
 
 ## Overview
-Stataconda is a powerful desktop GUI application that provides a Stata-like interface while leveraging Python's data science ecosystem. It accepts Stata commands, translates them into Python (using pandas, statsmodels, seaborn, etc.), executes the Python code, and formats the output to match Stata's familiar style.
+Stataconda is a desktop GUI application that provides a Stata-like interface while applying Python's data science ecosystem under the hood. It accepts Stata commands, translates them into Python (using pandas, statsmodels, seaborn, etc.), executes the Python code, and formats the output to match Stata's familiar style.
 
 ## Features
 - **Stata-like Interface**: Familiar command syntax and output formatting
@@ -34,7 +34,7 @@ python main.py
 2. Load a dataset using `use filename.dta` or `import filename.csv`
 3. Explore data with `browse`, `summarize`, or `describe`
 4. Run analyses using Stata-like commands
-5. Save results using `save filename.dta` or `export using filename.rtf`
+5. Save results using `save filename.dta` 
 
 ## Detailed Command Documentation
 
