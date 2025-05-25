@@ -2988,7 +2988,29 @@ class StatacondaGUI(QMainWindow):
             
             # Execute command and capture output
             try:
-                if exec_command.startswith('bash '):
+                if exec_command.startswith('!'):
+                    # Execute bash command (remove the ! prefix)
+                    bash_command = exec_command[1:].strip()
+                    process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    stdout, stderr = process.communicate()
+                    output = stdout.decode() + stderr.decode()
+                    self.results_window.append(output)
+                    print(f"[OUTPUT] {output}")  # Log output to console
+                elif exec_command.startswith('>'):
+                    # Execute Python command (remove the > prefix)
+                    python_command = exec_command[1:].strip()
+                    output_buffer = io.StringIO()
+                    with contextlib.redirect_stdout(output_buffer), contextlib.redirect_stderr(output_buffer):
+                        exec(python_command, self._python_context)
+                    result = output_buffer.getvalue()
+                    # After exec, update self._df in case it was changed in Python
+                    if '_df' in self._python_context:
+                        self._df = self._python_context['_df']
+                    self.results_window.append(str(result))
+                    print(f"[OUTPUT] {result}")  # Log output to console
+                    # Update the list of Python variables
+                    self.update_python_vars()
+                elif exec_command.startswith('bash '):
                     # Execute bash command
                     bash_command = exec_command[5:]  # Remove 'bash ' prefix
                     process = subprocess.Popen(bash_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -3009,7 +3031,7 @@ class StatacondaGUI(QMainWindow):
                         self.results_window.append(error_msg)
                         print(f"[ERROR] {error_msg}")  # Log error to console
                 elif exec_command in ['pwd', 'ls']:
-                    # Execute major bash commands directly
+                    # Execute pwd and ls commands directly
                     process = subprocess.Popen(exec_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     stdout, stderr = process.communicate()
                     output = stdout.decode() + stderr.decode()
